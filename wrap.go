@@ -12,6 +12,9 @@ import (
 func Wrap(s string, width int, breakpoints string) string {
 	var buf bytes.Buffer
 	s = ansi.Wrap(s, width, breakpoints)
+	// The writer only inserts resets around newlines, so the output is
+	// the same length as the input plus a little. Size it once.
+	buf.Grow(len(s) + len(s)/8)
 	w := NewWrapWriter(&buf)
 	defer w.Close() //nolint:errcheck
 	_, _ = io.WriteString(w, s)
